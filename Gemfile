@@ -14,6 +14,9 @@ gem 'uglifier', '~> 4.2.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'mini_racer', platforms: :ruby
 
+# for ActiveStorage use with S3 Amazon AWS
+gem 'aws-sdk-s3', '~> 1.126'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '~> 4.4'
 # Use CoffeeScript for .coffee assets and views
@@ -27,8 +30,6 @@ gem 'jbuilder', '~> 2.11'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1'
 
-# AWS S3
-gem 'aws-sdk-s3', '~> 1.114'
 # Webrick
 gem 'webrick', '~> 1.7'
 # Mail gem

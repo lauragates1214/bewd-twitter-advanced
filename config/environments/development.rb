@@ -15,6 +15,9 @@ Rails.application.configure do
   # Using the local settings for Active Storage
   config.active_storage.service = :local
 
+  # Using the Amazon S3 settings for Active Storage
+  config.active_storage.service = :amazon
+
   # Enable/disable caching. By default caching is disabled.
   if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
