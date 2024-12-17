@@ -41,6 +41,37 @@ RSpec.describe TweetsController, type: :controller do
       expect(JSON.parse(response.body)['tweet']['message']).to eq('Test Message')
       expect(JSON.parse(response.body)['tweet']['image']).to include('test.png')
     end
+
+    # rate limit test
+    it 'OK rate limit: 30 tweets per hour' do
+      # create a user
+      user = FactoryBot.create(:user)
+      # create a session for the user
+      session = user.sessions.create
+      # set the session token in the cookie, so user logged in in front-end
+      @request.cookie_jar.signed['twitter_session_token'] = session.token
+
+      # create 30 tweets for the user (max), so next one will fail
+      30.times do |i|
+        FactoryBot.create(:tweet, user: user)
+      end
+
+      # check that user has 30 tweets
+      expect(user.tweets.count).to eq(30)
+
+      # make the POST request
+      post :create, params: {
+        tweet: {
+          message: 'Test Message'
+        }
+      }
+
+      # check that user still has 30 tweets
+      expect(user.tweets.count).to eq(30)
+
+      # check that the response is correct
+      expect(JSON.parse(response.body)['error']['message']).to eq('Rate limit exceeded (30 tweets/hour). Please try again later.')
+    end
   end
 
   context 'GET /tweets' do

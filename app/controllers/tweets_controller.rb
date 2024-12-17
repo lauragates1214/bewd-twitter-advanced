@@ -5,15 +5,20 @@ class TweetsController < ApplicationController
   end
 
   def create
-    token = cookies.signed[:twitter_session_token]
-    session = Session.find_by(token: token)
-    user = session.user
-    @tweet = user.tweets.new(tweet_params)
+    # current_user in application controller (now reusable)
+    # pass_rate_limit in User model
+    # rate_limit_error in jbuilder under tweets/
+    # TweetMailer.notify in Tweet model
+    if !current_user.pass_rate_limit?
+      return render 'tweets/rate_limit_error'
+    end
+
+    # successfully passed conditions
+    @tweet = current_user.tweets.new(tweet_params)
 
     if @tweet.save
-      # invoke TweetMailer to send the email when a tweet is successfully posted
-      TweetMailer.notify(@tweet).deliver!
-      render 'tweets/create' 
+      # notify_via_email method in Tweet model
+      render 'tweets/create', status: 201
     end
   end
 
