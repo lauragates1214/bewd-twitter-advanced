@@ -10,7 +10,11 @@ class TweetsController < ApplicationController
     user = session.user
     @tweet = user.tweets.new(tweet_params)
 
-    render 'tweets/create' if @tweet.save
+    if @tweet.save
+      # invoke TweetMailer to send the email when a tweet is successfully posted
+      TweetMailer.notify(@tweet).deliver!
+      render 'tweets/create' 
+    end
   end
 
   def destroy
